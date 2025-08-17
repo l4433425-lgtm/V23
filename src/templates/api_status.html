@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status das APIs - ARQV30 Enhanced</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* Neumorphic Design System */
+        .neuro-container {
+            background: #f0f0f3;
+            border-radius: 24px;
+            box-shadow: inset 8px 8px 16px #c4c4c4, inset -8px -8px 16px #fcfcfc;
+            padding: 2rem;
+        }
+        
+        .neuro-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 8px 8px 16px #c4c4c4, -8px -8px 16px #fcfcfc;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .neuro-card:hover {
+            box-shadow: 12px 12px 20px #c4c4c4, -12px -12px 20px #fcfcfc;
+            transform: translateY(-2px);
+        }
+        
+        .neuro-icon {
+            background: #f0f0f3;
+            border-radius: 8px;
+            box-shadow: inset 3px 3px 6px #c4c4c4, inset -3px -3px 6px #fcfcfc;
+            padding: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-badge {
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+        
+        .priority-badge {
+            border-radius: 20px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-configured {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-missing {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-invalid {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-rate-limited {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .priority-critical {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .priority-high {
+            background: #fed7aa;
+            color: #9a3412;
+            border: 1px solid #fdba74;
+        }
+        
+        .priority-medium {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        
+        .priority-low {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 8px 8px 16px #c4c4c4, -8px -8px 16px #fcfcfc;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .refresh-btn {
+            background: #f0f0f3;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 8px 8px 16px #c4c4c4, -8px -8px 16px #fcfcfc;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .refresh-btn:hover {
+            box-shadow: inset 4px 4px 8px #c4c4c4, inset -4px -4px 8px #fcfcfc;
+        }
+        
+        .refresh-btn:active {
+            box-shadow: inset 6px 6px 12px #c4c4c4, inset -6px -6px 12px #fcfcfc;
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .header-nav {
+            margin-bottom: 2rem;
+        }
+        
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .nav-breadcrumb a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        .nav-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">
+                    <div class="logo-title">ARQV30 Enhanced</div>
+                    <div class="logo-subtitle">v2.0 - Status das APIs</div>
+                </div>
+            </a>
+            
+            <nav class="header-nav">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Início
+                </a>
+                <a href="/api_status" class="nav-link active">
+                    <i class="fas fa-cog"></i>
+                    APIs
+                </a>
+                <a href="/forensic" class="nav-link">
+                    <i class="fas fa-microscope"></i>
+                    Forense
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="header-nav">
+                <div class="nav-breadcrumb">
+                    <a href="/">Início</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Status das APIs</span>
+                </div>
+            </div>
+
+            <!-- Main Container -->
+            <div class="neuro-container">
+                <div class="mb-6">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div>
+                            <h2 style="font-size: 1.5rem; font-weight: 700; color: #374151; margin-bottom: 0.5rem;">
+                                Status de Configuração das APIs
+                            </h2>
+                            <p style="color: #6b7280;">
+                                Integrações de serviços externos e status de autenticação
+                            </p>
+                        </div>
+                        
+                        <button class="refresh-btn" onclick="refreshApiStatus()">
+                            <i class="fas fa-sync-alt"></i>
+                            Atualizar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                {% if stats %}
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ stats.configured }}</div>
+                        <div class="stat-label">Configuradas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ stats.missing }}</div>
+                        <div class="stat-label">Ausentes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ stats.critical_missing }}</div>
+                        <div class="stat-label">Críticas Ausentes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ "%.0f"|format(stats.health_percentage) }}%</div>
+                        <div class="stat-label">Saúde Geral</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- APIs Grid -->
+                <div class="api-grid">
+                    {% for api in apis %}
+                    <div class="neuro-card">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="neuro-icon">
+                                    <i class="fas fa-key" style="width: 1.25rem; height: 1.25rem; color: #6b7280;"></i>
+                                </div>
+                                <div>
+                                    <h3 style="font-weight: 700; color: #374151; font-size: 1.125rem; margin-bottom: 0.25rem;">
+                                        {{ api.name }}
+                                    </h3>
+                                    <p style="font-size: 0.875rem; color: #9ca3af;">{{ api.provider }}</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <!-- Status Icon -->
+                                {% if api.status == 'configured' %}
+                                    <i class="fas fa-check-circle" style="width: 1rem; height: 1rem; color: #10b981;"></i>
+                                {% elif api.status == 'missing' %}
+                                    <i class="fas fa-times-circle" style="width: 1rem; height: 1rem; color: #ef4444;"></i>
+                                {% elif api.status == 'invalid' %}
+                                    <i class="fas fa-exclamation-triangle" style="width: 1rem; height: 1rem; color: #ef4444;"></i>
+                                {% elif api.status == 'rate_limited' %}
+                                    <i class="fas fa-clock" style="width: 1rem; height: 1rem; color: #f59e0b;"></i>
+                                {% else %}
+                                    <div style="width: 1rem; height: 1rem; border-radius: 50%; background: #d1d5db;"></div>
+                                {% endif %}
+                                
+                                <!-- Priority Badge -->
+                                <span class="priority-badge priority-{{ api.priority }}">
+                                    {{ api.priority }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem; line-height: 1.5;" class="line-clamp-2">
+                            {{ api.description }}
+                        </p>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="margin-bottom: 0.5rem;">
+                                <span style="color: #9ca3af; font-weight: 500; font-size: 0.75rem;">Environment Variable:</span>
+                                <code style="margin-left: 0.5rem; background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px; color: #374151; font-size: 0.75rem;">
+                                    {{ api.env_var }}
+                                </code>
+                            </div>
+                            <div>
+                                <span style="color: #9ca3af; font-weight: 500; font-size: 0.75rem;">Usage:</span>
+                                <span style="margin-left: 0.5rem; color: #6b7280; font-size: 0.75rem;">{{ api.usage }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div class="status-badge status-{{ api.status }}" style="width: 100%;">
+                            {{ api.status.replace('_', ' ').upper() }}
+                        </div>
+                        
+                        <!-- Test Button (only for configured APIs) -->
+                        {% if api.status == 'configured' %}
+                        <button class="refresh-btn" style="width: 100%; margin-top: 0.75rem;" onclick="testApi('{{ api.name }}')">
+                            <i class="fas fa-play"></i>
+                            Testar API
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Configuration Instructions -->
+                {% if stats and stats.missing > 0 %}
+                <div style="margin-top: 2rem; padding: 1.5rem; background: #fef3c7; border-radius: 16px; border-left: 4px solid #f59e0b;">
+                    <h3 style="color: #92400e; font-weight: 700; margin-bottom: 1rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Configuração Necessária
+                    </h3>
+                    <p style="color: #92400e; margin-bottom: 1rem;">
+                        {{ stats.missing }} API(s) não estão configuradas. Para obter análises completas, configure as chaves de API no arquivo .env:
+                    </p>
+                    <div style="background: #fffbeb; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.875rem;">
+                        {% for api in apis %}
+                        {% if api.status != 'configured' %}
+                        <div style="margin-bottom: 0.5rem;">
+                            <span style="color: #92400e;">{{ api.env_var }}</span>=<span style="color: #6b7280;">sua_chave_api_aqui</span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- System Health -->
+                {% if stats %}
+                <div style="margin-top: 2rem; padding: 1.5rem; background: {% if stats.health_percentage >= 80 %}#dcfce7{% elif stats.health_percentage >= 60 %}#fef3c7{% else %}#fee2e2{% endif %}; border-radius: 16px;">
+                    <h3 style="color: {% if stats.health_percentage >= 80 %}#166534{% elif stats.health_percentage >= 60 %}#92400e{% else %}#991b1b{% endif %}; font-weight: 700; margin-bottom: 0.5rem;">
+                        <i class="fas fa-heartbeat"></i>
+                        Saúde do Sistema: {{ "%.0f"|format(stats.health_percentage) }}%
+                    </h3>
+                    <p style="color: {% if stats.health_percentage >= 80 %}#166534{% elif stats.health_percentage >= 60 %}#92400e{% else %}#991b1b{% endif %};">
+                        {% if stats.health_percentage >= 80 %}
+                            ✅ Sistema funcionando perfeitamente com todas as APIs principais configuradas.
+                        {% elif stats.health_percentage >= 60 %}
+                            ⚠️ Sistema funcional, mas algumas APIs estão ausentes. Configure para melhor performance.
+                        {% else %}
+                            ❌ Sistema com limitações. Configure as APIs críticas para funcionamento completo.
+                        {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Last Updated -->
+                <div style="margin-top: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
+                    <i class="fas fa-clock"></i>
+                    Última atualização: {{ timestamp }}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function refreshApiStatus() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            const originalContent = refreshBtn.innerHTML;
+            
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+            refreshBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/check_apis');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Recarrega a página para mostrar dados atualizados
+                    window.location.reload();
+                } else {
+                    alert('Erro ao atualizar status das APIs: ' + data.error);
+                }
+            } catch (error) {
+                alert('Erro ao conectar com o servidor: ' + error.message);
+            } finally {
+                refreshBtn.innerHTML = originalContent;
+                refreshBtn.disabled = false;
+            }
+        }
+        
+        async function testApi(apiName) {
+            const button = event.target;
+            const originalContent = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch(`/api/test_api/${encodeURIComponent(apiName)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`✅ ${apiName} está funcionando corretamente!`, 'success');
+                } else {
+                    showNotification(`❌ Erro ao testar ${apiName}: ${data.message || data.error}`, 'error');
+                }
+            } catch (error) {
+                showNotification(`❌ Erro ao testar ${apiName}: ${error.message}`, 'error');
+            } finally {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 8px 8px 16px #c4c4c4, -8px -8px 16px #fcfcfc;
+                z-index: 1000;
+                max-width: 400px;
+                border-left: 4px solid ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            `;
+            
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Auto-refresh a cada 30 segundos
+        setInterval(() => {
+            refreshApiStatus();
+        }, 30000);
+    </script>
+</body>
+</html>
