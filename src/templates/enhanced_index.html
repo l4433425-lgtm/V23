@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -14,6 +13,294 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    
+    <style>
+        /* Nova Identidade Visual ARQV30 Enhanced v3.0 */
+        :root {
+            --brand-primary: #6366f1;
+            --brand-secondary: #8b5cf6;
+            --brand-accent: #06b6d4;
+            --brand-success: #10b981;
+            --brand-warning: #f59e0b;
+            --brand-error: #ef4444;
+            
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-elevated: #f1f5f9;
+            --surface-card: #ffffff;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            
+            --gradient-brand: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+            --gradient-accent: linear-gradient(135deg, var(--brand-accent), var(--brand-success));
+            
+            --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-medium: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-strong: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        /* API Configuration Modal */
+        .api-config-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(8px);
+        }
+        
+        .api-config-content {
+            background: var(--surface-card);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-strong);
+            border: 1px solid var(--surface-elevated);
+        }
+        
+        .api-config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--surface-elevated);
+        }
+        
+        .api-config-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .api-config-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .api-config-close:hover {
+            background: var(--surface-elevated);
+            color: var(--text-primary);
+        }
+        
+        .api-section {
+            margin-bottom: 2rem;
+        }
+        
+        .api-section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .api-item {
+            background: var(--surface-secondary);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .api-item:hover {
+            border-color: var(--brand-primary);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .api-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .api-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .api-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .api-status.configured {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .api-status.missing {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .api-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .api-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .api-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--surface-elevated);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .api-input:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .api-test-btn {
+            padding: 0.75rem 1rem;
+            background: var(--gradient-brand);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .api-test-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .api-config-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--surface-elevated);
+        }
+        
+        /* Quick Setup Cards */
+        .quick-setup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quick-setup-card {
+            background: var(--surface-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid var(--surface-elevated);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .quick-setup-card:hover {
+            border-color: var(--brand-primary);
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+        
+        .quick-setup-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-brand);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-setup-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .quick-setup-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Enhanced Form Styling */
+        .enhanced-form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .enhanced-form-label {
+            position: absolute;
+            top: 0.75rem;
+            left: 1rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            pointer-events: none;
+            background: var(--surface-card);
+            padding: 0 0.25rem;
+        }
+        
+        .enhanced-form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--surface-elevated);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: var(--surface-card);
+        }
+        
+        .enhanced-form-input:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .enhanced-form-input:focus + .enhanced-form-label,
+        .enhanced-form-input:not(:placeholder-shown) + .enhanced-form-label {
+            top: -0.5rem;
+            font-size: 0.75rem;
+            color: var(--brand-primary);
+            font-weight: 600;
+        }
+    </style>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,6 +342,10 @@
                 <a href="/archaeological" class="nav-link">
                     <i class="fas fa-search"></i>
                     Arqueológica
+                </a>
+                <a href="#" class="nav-link" onclick="openApiConfig()">
+                    <i class="fas fa-cog"></i>
+                    Configurar APIs
                 </a>
                 
                 <div class="status-indicator" id="statusIndicator">
@@ -105,55 +396,64 @@
                         <div class="form-grid">
                             <!-- Informações Básicas -->
                             <div class="form-group">
-                                <label for="segmento" class="form-label required">
-                                    <i class="fas fa-bullseye"></i>
-                                    Segmento de Mercado
-                                </label>
-                                <input type="text" id="segmento" name="segmento" class="form-input" 
-                                       placeholder="Ex: Tecnologia, Saúde, Educação, E-commerce..." 
-                                       required>
+                                <div class="enhanced-form-group">
+                                    <input type="text" id="segmento" name="segmento" class="enhanced-form-input" 
+                                           placeholder=" " required>
+                                    <label for="segmento" class="enhanced-form-label">
+                                        <i class="fas fa-bullseye"></i>
+                                        Segmento de Mercado *
+                                    </label>
+                                </div>
                                 <div class="form-hint">
-                                    <i class="fas fa-info-circle"></i>
+                                    <i class="fas fa-bullseye"></i>
                                     Seja específico para obter análises mais precisas
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="produto" class="form-label">
-                                    <i class="fas fa-box"></i>
-                                    Produto ou Serviço
-                                </label>
-                                <input type="text" id="produto" name="produto" class="form-input"
-                                       placeholder="Nome do seu produto ou serviço">
+                                <div class="enhanced-form-group">
+                                    <input type="text" id="produto" name="produto" class="enhanced-form-input"
+                                           placeholder=" ">
+                                    <label for="produto" class="enhanced-form-label">
+                                        <i class="fas fa-box"></i>
+                                        Produto ou Serviço
+                                    </label>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="preco" class="form-label">
-                                    <i class="fas fa-dollar-sign"></i>
-                                    Preço (R$)
-                                </label>
-                                <input type="number" id="preco" name="preco" class="form-input" 
-                                       step="0.01" placeholder="997.00">
+                                <div class="enhanced-form-group">
+                                    <input type="number" id="preco" name="preco" class="enhanced-form-input" 
+                                           step="0.01" placeholder=" ">
+                                    <label for="preco" class="enhanced-form-label">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        Preço (R$)
+                                    </label>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="objetivo_receita" class="form-label">
-                                    <i class="fas fa-chart-line"></i>
-                                    Objetivo de Receita (R$)
-                                </label>
-                                <input type="number" id="objetivo_receita" name="objetivo_receita" 
-                                       class="form-input" step="0.01" placeholder="100000.00">
+                                <div class="enhanced-form-group">
+                                    <input type="number" id="objetivo_receita" name="objetivo_receita" 
+                                           class="enhanced-form-input" step="0.01" placeholder=" ">
+                                    <label for="objetivo_receita" class="enhanced-form-label">
+                                        <i class="fas fa-chart-line"></i>
+                                        Objetivo de Receita (R$)
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Público-Alvo -->
                         <div class="form-group">
-                            <label for="publico" class="form-label">
-                                <i class="fas fa-users"></i>
-                                Público-Alvo Detalhado
-                            </label>
-                            <textarea id="publico" name="publico" class="form-input form-textarea" rows="4"
-                                      placeholder="Descreva detalhadamente seu público-alvo ideal, incluindo dores, desejos, características demográficas e comportamentais..."></textarea>
+                            <div class="enhanced-form-group">
+                                <textarea id="publico" name="publico" class="enhanced-form-input form-textarea" 
+                                          rows="4" placeholder=" "></textarea>
+                                <label for="publico" class="enhanced-form-label">
+                                    <i class="fas fa-users"></i>
+                                    Público-Alvo Detalhado
+                                </label>
+                            </div>
                             <div class="form-hint">
                                 <i class="fas fa-lightbulb"></i>
                                 Quanto mais detalhes, melhor será o avatar gerado
@@ -163,44 +463,52 @@
                         <!-- Configurações Avançadas -->
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="orcamento_marketing" class="form-label">
-                                    <i class="fas fa-coins"></i>
-                                    Orçamento de Marketing (R$)
-                                </label>
-                                <input type="number" id="orcamento_marketing" name="orcamento_marketing" 
-                                       class="form-input" step="0.01" placeholder="10000.00">
+                                <div class="enhanced-form-group">
+                                    <input type="number" id="orcamento_marketing" name="orcamento_marketing" 
+                                           class="enhanced-form-input" step="0.01" placeholder=" ">
+                                    <label for="orcamento_marketing" class="enhanced-form-label">
+                                        <i class="fas fa-coins"></i>
+                                        Orçamento de Marketing (R$)
+                                    </label>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="prazo_lancamento" class="form-label">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    Prazo de Lançamento
-                                </label>
-                                <select id="prazo_lancamento" name="prazo_lancamento" class="form-input">
-                                    <option value="">Selecione o prazo...</option>
-                                    <option value="1-3 meses">1-3 meses</option>
-                                    <option value="3-6 meses">3-6 meses</option>
-                                    <option value="6-12 meses">6-12 meses</option>
-                                    <option value="Mais de 1 ano">Mais de 1 ano</option>
-                                </select>
+                                <div class="enhanced-form-group">
+                                    <select id="prazo_lancamento" name="prazo_lancamento" class="enhanced-form-input">
+                                        <option value=""></option>
+                                        <option value="1-3 meses">1-3 meses</option>
+                                        <option value="3-6 meses">3-6 meses</option>
+                                        <option value="6-12 meses">6-12 meses</option>
+                                        <option value="Mais de 1 ano">Mais de 1 ano</option>
+                                    </select>
+                                    <label for="prazo_lancamento" class="enhanced-form-label">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        Prazo de Lançamento
+                                    </label>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="concorrentes" class="form-label">
-                                    <i class="fas fa-chess"></i>
-                                    Principais Concorrentes
-                                </label>
-                                <input type="text" id="concorrentes" name="concorrentes" class="form-input"
-                                       placeholder="Liste os principais concorrentes separados por vírgula">
+                                <div class="enhanced-form-group">
+                                    <input type="text" id="concorrentes" name="concorrentes" class="enhanced-form-input"
+                                           placeholder=" ">
+                                    <label for="concorrentes" class="enhanced-form-label">
+                                        <i class="fas fa-chess"></i>
+                                        Principais Concorrentes
+                                    </label>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="query" class="form-label">
-                                    <i class="fas fa-search"></i>
-                                    Query de Pesquisa
-                                </label>
-                                <input type="text" id="query" name="query" class="form-input"
-                                       placeholder="Ex: mercado telemedicina Brasil 2024">
+                                <div class="enhanced-form-group">
+                                    <input type="text" id="query" name="query" class="enhanced-form-input"
+                                           placeholder=" ">
+                                    <label for="query" class="enhanced-form-label">
+                                        <i class="fas fa-search"></i>
+                                        Query de Pesquisa
+                                    </label>
+                                </div>
                                 <div class="form-hint">
                                     <i class="fas fa-robot"></i>
                                     IA gerará automaticamente se deixado em branco
@@ -208,18 +516,87 @@
                             </div>
                         </div>
 
-                        <!-- Contexto Adicional -->
+                        <!-- Quick Setup Section -->
                         <div class="form-group">
-                            <label for="dados_adicionais" class="form-label">
-                                <i class="fas fa-plus-circle"></i>
-                                Contexto Adicional para Análise
+                            <label class="form-label">
+                                <i class="fas fa-rocket"></i>
+                                Configuração Rápida
                             </label>
-                            <textarea id="dados_adicionais" name="dados_adicionais" 
-                                      class="form-input form-textarea" rows="6"
-                                      placeholder="Informações relevantes: dores específicas do público, objeções conhecidas, histórico de lançamentos, características psicológicas, etc..."></textarea>
+                            <div class="quick-setup-grid">
+                                <div class="quick-setup-card" onclick="fillQuickSetup('saude')">
+                                    <div class="quick-setup-icon">
+                                        <i class="fas fa-heartbeat"></i>
+                                    </div>
+                                    <div class="quick-setup-title">Saúde & Medicina</div>
+                                    <div class="quick-setup-description">
+                                        Telemedicina, clínicas, consultórios, healthtech
+                                    </div>
+                                </div>
+                                
+                                <div class="quick-setup-card" onclick="fillQuickSetup('tecnologia')">
+                                    <div class="quick-setup-icon">
+                                        <i class="fas fa-laptop-code"></i>
+                                    </div>
+                                    <div class="quick-setup-title">Tecnologia & Software</div>
+                                    <div class="quick-setup-description">
+                                        SaaS, aplicativos, sistemas, desenvolvimento
+                                    </div>
+                                </div>
+                                
+                                <div class="quick-setup-card" onclick="fillQuickSetup('educacao')">
+                                    <div class="quick-setup-icon">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                    <div class="quick-setup-title">Educação & Cursos</div>
+                                    <div class="quick-setup-description">
+                                        Cursos online, treinamentos, edtech, coaching
+                                    </div>
+                                </div>
+                                
+                                <div class="quick-setup-card" onclick="fillQuickSetup('consultoria')">
+                                    <div class="quick-setup-icon">
+                                        <i class="fas fa-handshake"></i>
+                                    </div>
+                                    <div class="quick-setup-title">Consultoria & Serviços</div>
+                                    <div class="quick-setup-description">
+                                        Consultoria empresarial, serviços profissionais
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- File Upload (opcional) -->
+                        <!-- Contexto Adicional -->
+                        <div class="form-group">
+                            <div class="enhanced-form-group">
+                                <textarea id="dados_adicionais" name="dados_adicionais" 
+                                          class="enhanced-form-input form-textarea" rows="6" placeholder=" "></textarea>
+                                <label for="dados_adicionais" class="enhanced-form-label">
+                                    <i class="fas fa-plus-circle"></i>
+                                    Contexto Adicional para Análise
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- API Status Indicator -->
+                        <div class="form-group">
+                            <div class="api-status-card" id="apiStatusCard">
+                                <div class="api-status-header">
+                                    <h4>
+                                        <i class="fas fa-plug"></i>
+                                        Status das APIs
+                                    </h4>
+                                    <button type="button" class="btn btn-secondary" onclick="openApiConfig()">
+                                        <i class="fas fa-cog"></i>
+                                        Configurar
+                                    </button>
+                                </div>
+                                <div class="api-status-grid" id="apiStatusGrid">
+                                    <!-- Status das APIs carregado dinamicamente -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
                         <div class="form-group">
                             <label class="form-label">
                                 <i class="fas fa-file-upload"></i>
@@ -260,12 +637,167 @@
                 </div>
             </section>
 
+            <!-- API Configuration Modal -->
+            <div id="apiConfigModal" class="api-config-modal">
+                <div class="api-config-content">
+                    <div class="api-config-header">
+                        <h3 class="api-config-title">
+                            <i class="fas fa-cog"></i>
+                            Configuração de APIs
+                        </h3>
+                        <button class="api-config-close" onclick="closeApiConfig()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h4 class="api-section-title">
+                            <i class="fas fa-brain"></i>
+                            APIs de Inteligência Artificial
+                        </h4>
+                        
+                        <div class="api-item">
+                            <div class="api-item-header">
+                                <span class="api-name">Google Gemini 2.5 Pro</span>
+                                <span class="api-status" id="gemini-status">Não Configurado</span>
+                            </div>
+                            <div class="api-description">
+                                Modelo primário de IA para análises ultra-detalhadas e avatar arqueológico
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="api-input" id="gemini-key" 
+                                       placeholder="Cole sua chave da API do Gemini aqui">
+                                <button class="api-test-btn" onclick="testAndSaveApi('gemini')">
+                                    <i class="fas fa-check"></i>
+                                    Testar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="api-item">
+                            <div class="api-item-header">
+                                <span class="api-name">OpenAI GPT-4</span>
+                                <span class="api-status" id="openai-status">Não Configurado</span>
+                            </div>
+                            <div class="api-description">
+                                Modelo de fallback para análises complementares e drivers mentais
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="api-input" id="openai-key" 
+                                       placeholder="Cole sua chave da API da OpenAI aqui">
+                                <button class="api-test-btn" onclick="testAndSaveApi('openai')">
+                                    <i class="fas fa-check"></i>
+                                    Testar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="api-item">
+                            <div class="api-item-header">
+                                <span class="api-name">Groq Llama</span>
+                                <span class="api-status" id="groq-status">Não Configurado</span>
+                            </div>
+                            <div class="api-description">
+                                Modelo de alta velocidade para processamento rápido
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="api-input" id="groq-key" 
+                                       placeholder="Cole sua chave da API do Groq aqui">
+                                <button class="api-test-btn" onclick="testAndSaveApi('groq')">
+                                    <i class="fas fa-check"></i>
+                                    Testar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h4 class="api-section-title">
+                            <i class="fas fa-search"></i>
+                            APIs de Pesquisa
+                        </h4>
+                        
+                        <div class="api-item">
+                            <div class="api-item-header">
+                                <span class="api-name">Exa Neural Search</span>
+                                <span class="api-status" id="exa-status">Não Configurado</span>
+                            </div>
+                            <div class="api-description">
+                                Busca neural semântica avançada para pesquisa web massiva
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="api-input" id="exa-key" 
+                                       placeholder="Cole sua chave da API do Exa aqui">
+                                <button class="api-test-btn" onclick="testAndSaveApi('exa')">
+                                    <i class="fas fa-check"></i>
+                                    Testar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="api-item">
+                            <div class="api-item-header">
+                                <span class="api-name">Jina Reader</span>
+                                <span class="api-status" id="jina-status">Não Configurado</span>
+                            </div>
+                            <div class="api-description">
+                                Extração avançada de conteúdo web para análise profunda
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="api-input" id="jina-key" 
+                                       placeholder="Cole sua chave da API do Jina aqui">
+                                <button class="api-test-btn" onclick="testAndSaveApi('jina')">
+                                    <i class="fas fa-check"></i>
+                                    Testar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h4 class="api-section-title">
+                            <i class="fas fa-share-alt"></i>
+                            APIs de Redes Sociais
+                        </h4>
+                        
+                        <div class="api-item">
+                            <div class="api-item-header">
+                                <span class="api-name">YouTube Data API</span>
+                                <span class="api-status" id="youtube-status">Não Configurado</span>
+                            </div>
+                            <div class="api-description">
+                                Análise de vídeos e tendências do YouTube
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="api-input" id="youtube-key" 
+                                       placeholder="Cole sua chave da API do YouTube aqui">
+                                <button class="api-test-btn" onclick="testAndSaveApi('youtube')">
+                                    <i class="fas fa-check"></i>
+                                    Testar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="api-config-actions">
+                        <button class="btn btn-secondary" onclick="closeApiConfig()">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </button>
+                        <button class="btn btn-primary" onclick="saveAllApiConfig()">
+                            <i class="fas fa-save"></i>
+                            Salvar Configurações
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Progress Container -->
             <section id="progressContainer" class="progress-container" style="display: none;">
                 <div class="progress-header">
                     <div class="progress-title">
                         <i class="fas fa-cogs fa-spin"></i>
-                        Análise em Execução
+                        Análise Ultra-Detalhada em Execução
                     </div>
                     <div class="progress-percentage">0%</div>
                 </div>
@@ -275,7 +807,11 @@
                 </div>
                 
                 <div class="progress-status">
-                    Iniciando análise...
+                    Iniciando análise com TODOS os módulos...
+                </div>
+                
+                <div class="progress-modules" id="progressModules">
+                    <!-- Status dos módulos será carregado aqui -->
                 </div>
             </section>
 
@@ -303,11 +839,11 @@
                 </div>
             </section>
 
-            <!-- Stats Grid -->
+            <!-- Enhanced Stats Grid -->
             <section class="stats-grid animate-on-scroll">
                 <div class="stat-card">
-                    <div class="stat-value">12</div>
-                    <div class="stat-label">Camadas de Análise</div>
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">Módulos Completos</div>
                 </div>
                 
                 <div class="stat-card">
@@ -335,18 +871,195 @@
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api-config.js') }}"></script>
     
     <script>
-        // Inicialização adicional
+        // API Configuration Functions
+        function openApiConfig() {
+            document.getElementById('apiConfigModal').style.display = 'flex';
+            loadCurrentApiStatus();
+        }
+        
+        function closeApiConfig() {
+            document.getElementById('apiConfigModal').style.display = 'none';
+        }
+        
+        async function loadCurrentApiStatus() {
+            try {
+                const response = await fetch('/api/get_api_config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateApiStatusDisplay(data.config);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar status das APIs:', error);
+            }
+        }
+        
+        function updateApiStatusDisplay(config) {
+            const apis = ['gemini', 'openai', 'groq', 'exa', 'jina', 'youtube'];
+            
+            apis.forEach(api => {
+                const statusElement = document.getElementById(`${api}-status`);
+                if (statusElement) {
+                    if (config[api]) {
+                        statusElement.textContent = 'Configurado';
+                        statusElement.className = 'api-status configured';
+                    } else {
+                        statusElement.textContent = 'Não Configurado';
+                        statusElement.className = 'api-status missing';
+                    }
+                }
+            });
+        }
+        
+        async function testAndSaveApi(apiName) {
+            const keyInput = document.getElementById(`${apiName}-key`);
+            const apiKey = keyInput.value.trim();
+            
+            if (!apiKey) {
+                showNotification('Por favor, insira a chave da API', 'warning');
+                return;
+            }
+            
+            const button = event.target;
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/api/save_api_config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        api_name: apiName,
+                        api_key: apiKey
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(`✅ ${apiName.toUpperCase()} configurado com sucesso!`, 'success');
+                    
+                    // Atualiza status visual
+                    const statusElement = document.getElementById(`${apiName}-status`);
+                    statusElement.textContent = 'Configurado';
+                    statusElement.className = 'api-status configured';
+                    
+                    // Limpa o campo
+                    keyInput.value = '';
+                    
+                    // Atualiza status geral
+                    updateSystemStatus();
+                    
+                } else {
+                    showNotification(`❌ Erro ao configurar ${apiName}: ${result.error}`, 'error');
+                }
+                
+            } catch (error) {
+                showNotification(`❌ Erro de conexão: ${error.message}`, 'error');
+            } finally {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }
+        }
+        
+        async function saveAllApiConfig() {
+            showNotification('Configurações salvas! As APIs estão prontas para uso.', 'success');
+            closeApiConfig();
+            updateSystemStatus();
+        }
+        
+        // Quick Setup Functions
+        function fillQuickSetup(type) {
+            const templates = {
+                'saude': {
+                    segmento: 'Telemedicina e Saúde Digital',
+                    produto: 'Plataforma de Telemedicina',
+                    publico: 'Médicos e profissionais de saúde que buscam modernizar atendimento, reduzir custos operacionais e ampliar alcance de pacientes através de tecnologia',
+                    preco: '497.00',
+                    objetivo_receita: '50000.00',
+                    dados_adicionais: 'Mercado regulamentado pelo CFM, alta demanda pós-pandemia, necessidade de compliance com LGPD e normas médicas'
+                },
+                'tecnologia': {
+                    segmento: 'Software e Tecnologia',
+                    produto: 'Solução SaaS B2B',
+                    publico: 'Gestores de TI e CTOs de empresas médias que precisam otimizar processos, reduzir custos de infraestrutura e acelerar transformação digital',
+                    preco: '997.00',
+                    objetivo_receita: '100000.00',
+                    dados_adicionais: 'Mercado em crescimento acelerado, alta competitividade, necessidade de diferenciação técnica e suporte especializado'
+                },
+                'educacao': {
+                    segmento: 'Educação e Treinamento Online',
+                    produto: 'Curso Online Especializado',
+                    publico: 'Profissionais que buscam especialização, empreendedores querendo aprender novas habilidades, pessoas em transição de carreira',
+                    preco: '1997.00',
+                    objetivo_receita: '200000.00',
+                    dados_adicionais: 'Mercado de educação online cresceu 400% nos últimos 3 anos, alta demanda por certificações e habilidades práticas'
+                },
+                'consultoria': {
+                    segmento: 'Consultoria Empresarial',
+                    produto: 'Consultoria Estratégica',
+                    publico: 'CEOs e diretores de empresas médias que enfrentam desafios de crescimento, necessitam reestruturação ou querem acelerar resultados',
+                    preco: '15000.00',
+                    objetivo_receita: '500000.00',
+                    dados_adicionais: 'Mercado premium, decisão baseada em ROI, necessidade de credibilidade e cases comprovados, ciclo de vendas mais longo'
+                }
+            };
+            
+            const template = templates[type];
+            if (template) {
+                Object.keys(template).forEach(key => {
+                    const input = document.getElementById(key);
+                    if (input) {
+                        input.value = template[key];
+                        // Trigger change event for enhanced inputs
+                        input.dispatchEvent(new Event('input'));
+                    }
+                });
+                
+                showNotification(`✅ Template ${type} aplicado com sucesso!`, 'success');
+            }
+        }
+        
+        // Enhanced initialization
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎯 Interface Moderna Carregada');
+            console.log('🎯 Interface Moderna v3.0 Carregada');
+            
+            // Carrega status das APIs
+            loadCurrentApiStatus();
             
             // Atualiza status do sistema
             updateSystemStatus();
             
             // Configura tooltips e animações
             initializeEnhancements();
+            
+            // Configura enhanced form inputs
+            setupEnhancedInputs();
         });
+        
+        function setupEnhancedInputs() {
+            // Enhanced form inputs com floating labels
+            document.querySelectorAll('.enhanced-form-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value) {
+                        this.classList.add('has-value');
+                    } else {
+                        this.classList.remove('has-value');
+                    }
+                });
+                
+                // Check initial value
+                if (input.value) {
+                    input.classList.add('has-value');
+                }
+            });
+        }
 
         async function updateSystemStatus() {
             try {
@@ -356,19 +1069,76 @@
                 const statusIndicator = document.getElementById('statusIndicator');
                 const statusText = document.getElementById('statusText');
                 
-                if (data.services && data.services.search_providers.available > 0) {
-                    statusText.textContent = `Sistema Online (${data.services.search_providers.available} provedores)`;
+                if (data.status === 'healthy') {
+                    statusText.textContent = 'Sistema Completo Online';
                     statusIndicator.style.color = 'var(--accent-emerald)';
                 } else {
-                    statusText.textContent = 'Configuração Parcial';
+                    statusText.textContent = 'Configure APIs para Máxima Performance';
                     statusIndicator.style.color = 'var(--accent-amber)';
                 }
+                
+                // Atualiza card de status das APIs
+                updateApiStatusCard(data);
+                
             } catch (error) {
                 console.warn('Erro ao verificar status:', error);
                 const statusText = document.getElementById('statusText');
-                statusText.textContent = 'Verificando...';
+                statusText.textContent = 'Verificando Sistema...';
             }
         }
+        
+        function updateApiStatusCard(systemData) {
+            const apiStatusGrid = document.getElementById('apiStatusGrid');
+            if (!apiStatusGrid) return;
+            
+            // Carrega status real das APIs
+            if (window.apiConfigManager) {
+                const status = apiConfigManager.getConfigurationStatus();
+                const apiStatus = [
+                    { name: 'Gemini AI', status: status.critical_configured > 0 ? 'configured' : 'missing', icon: 'fas fa-brain' },
+                    { name: 'Exa Search', status: 'configured', icon: 'fas fa-search' },
+                    { name: 'Jina Reader', status: 'configured', icon: 'fas fa-file-text' },
+                    { name: 'OpenAI GPT', status: 'configured', icon: 'fas fa-robot' }
+                ];
+                
+                apiStatusGrid.innerHTML = apiStatus.map(api => `
+                    <div class="api-status-item">
+                        <i class="${api.icon}" style="color: ${api.status === 'configured' ? 'var(--brand-success)' : 'var(--brand-warning)'}"></i>
+                        <span>${api.name}</span>
+                        <span class="badge badge-${api.status === 'configured' ? 'success' : 'warning'}">
+                            ${api.status === 'configured' ? 'OK' : 'Config'}
+                        </span>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Global API functions
+        window.openApiConfig = function() {
+            document.getElementById('apiConfigModal').style.display = 'flex';
+            if (window.apiConfigManager) {
+                apiConfigManager.loadCurrentStatus();
+            }
+        };
+        
+        window.closeApiConfig = function() {
+            document.getElementById('apiConfigModal').style.display = 'none';
+        };
+        
+        window.saveAllApiConfig = async function() {
+            showNotification('✅ Configurações salvas! Sistema pronto para análises ultra-detalhadas.', 'success');
+            closeApiConfig();
+            
+            // Atualiza status do sistema
+            updateSystemStatus();
+            
+            // Recarrega status das APIs
+            if (window.apiConfigManager) {
+                apiConfigManager.loadCurrentStatus();
+            }
+        };
+        
+        window.fillQuickSetup = fillQuickSetup;
 
         function initializeEnhancements() {
             // Smooth scroll para links internos
@@ -433,6 +1203,231 @@
                 });
             }
         }
+        
+        // Enhanced progress tracking with modules
+        function updateProgressWithModules(percentage, message, modulesStatus) {
+            // Atualiza progresso principal
+            updateProgress(percentage, message);
+            
+            // Atualiza status dos módulos
+            const progressModules = document.getElementById('progressModules');
+            if (progressModules && modulesStatus) {
+                const modules = [
+                    { key: 'avatars', name: 'Avatar Ultra-Detalhado' },
+                    { key: 'drivers_mentais', name: '19 Drivers Mentais' },
+                    { key: 'anti_objecao', name: 'Sistema Anti-Objeção' },
+                    { key: 'provas_visuais', name: 'Provas Visuais' },
+                    { key: 'pre_pitch', name: 'Pré-Pitch Invisível' },
+                    { key: 'predicoes_futuro', name: 'Predições Futuras' },
+                    { key: 'concorrencia', name: 'Análise Concorrência' },
+                    { key: 'palavras_chave', name: 'Palavras-Chave' },
+                    { key: 'funil_vendas', name: 'Funil de Vendas' },
+                    { key: 'metricas', name: 'Métricas & KPIs' },
+                    { key: 'insights', name: 'Insights Exclusivos' },
+                    { key: 'plano_acao', name: 'Plano de Ação' },
+                    { key: 'posicionamento', name: 'Posicionamento' },
+                    { key: 'pesquisa_web', name: 'Pesquisa Web' }
+                ];
+                
+                progressModules.innerHTML = modules.map(module => {
+                    const status = modulesStatus[module.key] || 'pending';
+                    const statusText = {
+                        'pending': 'Aguardando',
+                        'processing': 'Processando',
+                        'completed': 'Concluído',
+                        'error': 'Erro'
+                    }[status] || 'Desconhecido';
+                    
+                    return `
+                        <div class="module-progress-item">
+                            <span class="module-name">
+                                <i class="fas fa-${this.getModuleIcon(module.key)}"></i>
+                                ${module.name}
+                            </span>
+                            <span class="module-status ${status}">${statusText}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        function getModuleIcon(moduleKey) {
+            const icons = {
+                'avatars': 'user-circle',
+                'drivers_mentais': 'brain',
+                'anti_objecao': 'shield-alt',
+                'provas_visuais': 'eye',
+                'pre_pitch': 'bullhorn',
+                'predicoes_futuro': 'crystal-ball',
+                'concorrencia': 'chess',
+                'palavras_chave': 'key',
+                'funil_vendas': 'funnel-dollar',
+                'metricas': 'chart-line',
+                'insights': 'lightbulb',
+                'plano_acao': 'tasks',
+                'posicionamento': 'crosshairs',
+                'pesquisa_web': 'search'
+            };
+            return icons[moduleKey] || 'cog';
+        }
     </script>
+    
+    <style>
+        /* API Status Card */
+        .api-status-card {
+            background: var(--surface-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid var(--surface-elevated);
+            margin-bottom: 1rem;
+        }
+        
+        .api-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .api-status-header h4 {
+            margin: 0;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .api-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .api-status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--surface-secondary);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .api-status-item i {
+            width: 16px;
+            text-align: center;
+        }
+        
+        .api-status-item span:last-child {
+            margin-left: auto;
+        }
+        
+        /* Progress Modules */
+        .progress-modules {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+        
+        .module-progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .module-progress-item:last-child {
+            border-bottom: none;
+        }
+        
+        .module-name {
+            font-weight: 500;
+        }
+        
+        .module-status {
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .module-status.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .module-status.processing {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .module-status.pending {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+        }
+        
+        /* Enhanced API Status Styling */
+        .api-status-card {
+            background: var(--surface-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid var(--surface-elevated);
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .api-status-card:hover {
+            border-color: var(--brand-primary);
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-1px);
+        }
+        
+        .api-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .api-status-header h4 {
+            margin: 0;
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .api-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .api-status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--surface-secondary);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .api-status-item:hover {
+            background: var(--surface-tertiary);
+            transform: translateX(2px);
+        }
+        
+        .api-status-item i {
+            width: 16px;
+            text-align: center;
+        }
+        
+        .api-status-item span:last-child {
+            margin-left: auto;
+        }
+    </style>
 </body>
 </html>

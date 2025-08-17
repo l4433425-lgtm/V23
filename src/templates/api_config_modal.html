@@ -1,0 +1,459 @@
+<!-- Modal de Configuração de APIs -->
+<div id="apiConfigModal" class="api-config-modal">
+    <div class="api-config-content">
+        <div class="api-config-header">
+            <h3 class="api-config-title">
+                <i class="fas fa-cog"></i>
+                Configuração Completa de APIs
+            </h3>
+            <button class="api-config-close" onclick="closeApiConfig()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Status Overview -->
+        <div class="api-overview">
+            <div class="overview-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="configuredCount">0</span>
+                    <span class="stat-label">Configuradas</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="missingCount">8</span>
+                    <span class="stat-label">Pendentes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="healthScore">0%</span>
+                    <span class="stat-label">Saúde</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI APIs Section -->
+        <div class="api-section">
+            <h4 class="api-section-title">
+                <i class="fas fa-brain"></i>
+                APIs de Inteligência Artificial
+                <span class="section-badge critical">Críticas</span>
+            </h4>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">Google Gemini 2.5 Pro</span>
+                        <span class="api-priority critical">Modelo Primário</span>
+                    </div>
+                    <span class="api-status" id="gemini-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Modelo principal de IA para análises ultra-detalhadas, avatar arqueológico e drivers mentais
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="gemini-key" 
+                           placeholder="AIzaSy... (Cole sua chave do Google AI Studio)">
+                    <button class="api-test-btn" onclick="testAndSaveApi('gemini')">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Obter chave no Google AI Studio
+                    </a>
+                </div>
+            </div>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">OpenAI GPT-4</span>
+                        <span class="api-priority high">Fallback Principal</span>
+                    </div>
+                    <span class="api-status" id="openai-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Modelo de fallback para análises complementares e processamento de módulos específicos
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="openai-key" 
+                           placeholder="sk-... (Cole sua chave da OpenAI)">
+                    <button class="api-test-btn" onclick="testAndSaveApi('openai')">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://platform.openai.com/api-keys" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Obter chave na OpenAI Platform
+                    </a>
+                </div>
+            </div>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">Groq Llama</span>
+                        <span class="api-priority medium">Alta Velocidade</span>
+                    </div>
+                    <span class="api-status" id="groq-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Modelo de alta velocidade para processamento rápido e fallback secundário
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="groq-key" 
+                           placeholder="gsk_... (Cole sua chave do Groq)">
+                    <button class="api-test-btn" onclick="testAndSaveApi('groq')">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://console.groq.com/keys" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Obter chave no Groq Console
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search APIs Section -->
+        <div class="api-section">
+            <h4 class="api-section-title">
+                <i class="fas fa-search"></i>
+                APIs de Pesquisa Avançada
+                <span class="section-badge high">Importantes</span>
+            </h4>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">Exa Neural Search</span>
+                        <span class="api-priority high">Busca Semântica</span>
+                    </div>
+                    <span class="api-status" id="exa-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Busca neural semântica avançada para pesquisa web massiva e descoberta de insights
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="exa-key" 
+                           placeholder="Cole sua chave da API do Exa">
+                    <button class="api-test-btn" onclick="testAndSaveApi('exa')">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://dashboard.exa.ai/api-keys" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Obter chave no Exa Dashboard
+                    </a>
+                </div>
+            </div>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">Jina Reader</span>
+                        <span class="api-priority high">Extração de Conteúdo</span>
+                    </div>
+                    <span class="api-status" id="jina-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Extração avançada de conteúdo web para análise profunda de páginas e documentos
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="jina-key" 
+                           placeholder="jina_... (Cole sua chave do Jina)">
+                    <button class="api-test-btn" onclick="testAndSaveApi('jina')">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://jina.ai/reader/" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Obter chave no Jina AI
+                    </a>
+                </div>
+            </div>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">Google Custom Search</span>
+                        <span class="api-priority medium">Busca Complementar</span>
+                    </div>
+                    <span class="api-status" id="google-search-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Busca por palavras-chave no Google para dados específicos e validação
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="google-search-key" 
+                           placeholder="AIzaSy... (Chave do Google Search)">
+                    <input type="text" class="api-input" id="google-cse-id" 
+                           placeholder="CSE ID (Custom Search Engine)">
+                    <button class="api-test-btn" onclick="testAndSaveGoogleSearch()">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://developers.google.com/custom-search/v1/introduction" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Configurar Google Custom Search
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Social APIs Section -->
+        <div class="api-section">
+            <h4 class="api-section-title">
+                <i class="fas fa-share-alt"></i>
+                APIs de Redes Sociais
+                <span class="section-badge medium">Opcionais</span>
+            </h4>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">YouTube Data API</span>
+                        <span class="api-priority medium">Análise de Vídeos</span>
+                    </div>
+                    <span class="api-status" id="youtube-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Análise de vídeos, tendências e comentários do YouTube para insights sociais
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="youtube-key" 
+                           placeholder="AIzaSy... (Chave do YouTube Data API)">
+                    <button class="api-test-btn" onclick="testAndSaveApi('youtube')">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://console.developers.google.com/apis/api/youtube.googleapis.com" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Ativar YouTube Data API
+                    </a>
+                </div>
+            </div>
+            
+            <div class="api-item">
+                <div class="api-item-header">
+                    <div class="api-info">
+                        <span class="api-name">Twitter/X API</span>
+                        <span class="api-priority medium">Análise Social</span>
+                    </div>
+                    <span class="api-status" id="twitter-status">Não Configurado</span>
+                </div>
+                <div class="api-description">
+                    Análise de tweets, tendências e sentimentos para insights de mercado
+                </div>
+                <div class="api-input-group">
+                    <input type="password" class="api-input" id="twitter-key" 
+                           placeholder="Bearer Token do Twitter/X">
+                    <button class="api-test-btn" onclick="testAndSaveApi('twitter')">
+                        <i class="fas fa-check"></i>
+                        Testar & Salvar
+                    </button>
+                </div>
+                <div class="api-help">
+                    <a href="https://developer.twitter.com/en/portal/dashboard" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Obter acesso no Twitter Developer
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="api-config-actions">
+            <button class="btn btn-secondary" onclick="closeApiConfig()">
+                <i class="fas fa-times"></i>
+                Fechar
+            </button>
+            <button class="btn btn-warning" onclick="testAllApis()">
+                <i class="fas fa-flask"></i>
+                Testar Todas
+            </button>
+            <button class="btn btn-primary" onclick="saveAllApiConfig()">
+                <i class="fas fa-save"></i>
+                Salvar Configurações
+            </button>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="api-help-section">
+            <h5>
+                <i class="fas fa-question-circle"></i>
+                Precisa de Ajuda?
+            </h5>
+            <div class="help-links">
+                <a href="#" onclick="showApiGuide()">
+                    <i class="fas fa-book"></i>
+                    Guia de Configuração
+                </a>
+                <a href="#" onclick="showApiPricing()">
+                    <i class="fas fa-dollar-sign"></i>
+                    Informações de Preços
+                </a>
+                <a href="#" onclick="showTroubleshooting()">
+                    <i class="fas fa-wrench"></i>
+                    Solução de Problemas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* API Configuration Modal Styles */
+.api-overview {
+    background: var(--surface-secondary);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.overview-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--surface-card);
+    border-radius: 8px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-primary);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.api-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.api-priority {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.api-priority.critical {
+    color: var(--brand-error);
+}
+
+.api-priority.high {
+    color: var(--brand-warning);
+}
+
+.api-priority.medium {
+    color: var(--brand-info);
+}
+
+.section-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: auto;
+}
+
+.section-badge.critical {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--brand-error);
+}
+
+.section-badge.high {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--brand-warning);
+}
+
+.section-badge.medium {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--brand-info);
+}
+
+.api-help {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.api-help a {
+    color: var(--brand-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.2s;
+}
+
+.api-help a:hover {
+    color: var(--brand-secondary);
+    transform: translateX(2px);
+}
+
+.api-help-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--surface-elevated);
+}
+
+.api-help-section h5 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.help-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+}
+
+.help-links a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--surface-elevated);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.help-links a:hover {
+    background: var(--surface-tertiary);
+    color: var(--brand-primary);
+    transform: translateY(-1px);
+}
+</style>

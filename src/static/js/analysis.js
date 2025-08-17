@@ -27,6 +27,9 @@ class ModernAnalysisSystem {
 
         // Configura auto-save
         this.setupAutoSave();
+        
+        // Carrega status das APIs
+        this.loadApiStatus();
     }
 
     setupAnimationObservers() {
@@ -68,6 +71,9 @@ class ModernAnalysisSystem {
 
         // Auto-resize de textareas
         this.setupTextareaResize();
+        
+        // Setup enhanced form inputs
+        this.setupEnhancedInputs();
     }
 
     setupControlButtons() {
@@ -76,13 +82,40 @@ class ModernAnalysisSystem {
             'resumeBtn': () => this.resumeSession(),
             'saveBtn': () => this.saveSession(),
             'refreshSessionsBtn': () => this.loadSavedSessions(),
-            'clearSessionsBtn': () => this.clearAllSessions()
+            'clearSessionsBtn': () => this.clearAllSessions(),
+            'configureApisBtn': () => this.openApiConfig()
         };
 
         Object.entries(buttons).forEach(([id, handler]) => {
             const btn = document.getElementById(id);
             if (btn) {
                 btn.addEventListener('click', handler);
+            }
+        });
+    }
+
+    setupEnhancedInputs() {
+        // Enhanced form inputs com floating labels
+        document.querySelectorAll('.enhanced-form-input').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value) {
+                    this.classList.add('has-value');
+                } else {
+                    this.classList.remove('has-value');
+                }
+            });
+            
+            input.addEventListener('focus', function() {
+                this.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.classList.remove('focused');
+            });
+            
+            // Check initial value
+            if (input.value) {
+                input.classList.add('has-value');
             }
         });
     }
@@ -301,6 +334,43 @@ class ModernAnalysisSystem {
             this.showNotification(`Erro na análise: ${error.message}`, 'error');
             this.showProgress(false);
         }
+    }
+
+    async loadApiStatus() {
+        """Carrega status atual das APIs"""
+        try {
+            const response = await fetch('/api/get_api_config');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.updateApiStatusDisplay(data.config);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar status das APIs:', error);
+        }
+    }
+    
+    updateApiStatusDisplay(config) {
+        """Atualiza display do status das APIs"""
+        const apiStatusGrid = document.getElementById('apiStatusGrid');
+        if (!apiStatusGrid) return;
+        
+        const apis = [
+            { key: 'gemini', name: 'Gemini AI', icon: 'fas fa-brain' },
+            { key: 'openai', name: 'OpenAI', icon: 'fas fa-robot' },
+            { key: 'exa', name: 'Exa Search', icon: 'fas fa-search' },
+            { key: 'jina', name: 'Jina Reader', icon: 'fas fa-file-text' }
+        ];
+        
+        apiStatusGrid.innerHTML = apis.map(api => `
+            <div class="api-status-item">
+                <i class="${api.icon}" style="color: ${config[api.key] ? 'var(--brand-success)' : 'var(--brand-warning)'}"></i>
+                <span>${api.name}</span>
+                <span class="badge badge-${config[api.key] ? 'success' : 'warning'}">
+                    ${config[api.key] ? 'OK' : 'Config'}
+                </span>
+            </div>
+        `).join('');
     }
 
     validateForm() {
@@ -624,6 +694,9 @@ class ModernAnalysisSystem {
                         data.total_steps,
                         data.estimated_time
                     );
+                    
+                    // Atualiza status dos módulos
+                    this.updateModulesProgress(data.modules_status);
 
                     if (data.completed) {
                         this.stopProgressMonitoring();
@@ -645,6 +718,56 @@ class ModernAnalysisSystem {
                 console.error('Erro no monitoramento:', error);
             }
         }, 3000); // Verifica a cada 3 segundos
+    }
+
+    updateModulesProgress(modulesStatus) {
+        """Atualiza progresso dos módulos"""
+        const progressModules = document.getElementById('progressModules');
+        if (!progressModules || !modulesStatus) return;
+        
+        const modules = [
+            'avatars', 'drivers_mentais', 'anti_objecao', 'provas_visuais',
+            'pre_pitch', 'predicoes_futuro', 'concorrencia', 'palavras_chave',
+            'funil_vendas', 'metricas', 'insights', 'plano_acao',
+            'posicionamento', 'pesquisa_web'
+        ];
+        
+        const moduleNames = {
+            'avatars': 'Avatar Ultra-Detalhado',
+            'drivers_mentais': '19 Drivers Mentais',
+            'anti_objecao': 'Sistema Anti-Objeção',
+            'provas_visuais': 'Provas Visuais',
+            'pre_pitch': 'Pré-Pitch Invisível',
+            'predicoes_futuro': 'Predições Futuras',
+            'concorrencia': 'Análise Concorrência',
+            'palavras_chave': 'Palavras-Chave',
+            'funil_vendas': 'Funil de Vendas',
+            'metricas': 'Métricas & KPIs',
+            'insights': 'Insights Exclusivos',
+            'plano_acao': 'Plano de Ação',
+            'posicionamento': 'Posicionamento',
+            'pesquisa_web': 'Pesquisa Web'
+        };
+        
+        progressModules.innerHTML = modules.map(module => {
+            const status = modulesStatus[module] || 'pending';
+            return `
+                <div class="module-progress-item">
+                    <span class="module-name">${moduleNames[module]}</span>
+                    <span class="module-status ${status}">${this.getModuleStatusText(status)}</span>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    getModuleStatusText(status) {
+        const statusMap = {
+            'pending': 'Aguardando',
+            'processing': 'Processando',
+            'completed': 'Concluído',
+            'error': 'Erro'
+        };
+        return statusMap[status] || 'Desconhecido';
     }
 
     stopProgressMonitoring() {
@@ -671,7 +794,7 @@ class ModernAnalysisSystem {
         if (progressStatus && message) {
             progressStatus.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>${message}</span>
+                    <span><strong>Etapa ${Math.round(percentage/100*14)}:</strong> ${message}</span>
                     ${estimatedTime ? `<small>Tempo estimado: ${estimatedTime}</small>` : ''}
                 </div>
             `;
@@ -968,6 +1091,169 @@ class ModernAnalysisSystem {
     }
 }
 
+// API Configuration Functions (Global)
+function openApiConfig() {
+    document.getElementById('apiConfigModal').style.display = 'flex';
+    loadCurrentApiStatus();
+}
+
+function closeApiConfig() {
+    document.getElementById('apiConfigModal').style.display = 'none';
+}
+
+async function loadCurrentApiStatus() {
+    try {
+        const response = await fetch('/api/get_api_config');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateApiStatusInModal(data.config);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar status das APIs:', error);
+    }
+}
+
+function updateApiStatusInModal(config) {
+    const apis = ['gemini', 'openai', 'groq', 'exa', 'jina', 'youtube'];
+    
+    apis.forEach(api => {
+        const statusElement = document.getElementById(`${api}-status`);
+        if (statusElement) {
+            if (config[api]) {
+                statusElement.textContent = 'Configurado';
+                statusElement.className = 'api-status configured';
+            } else {
+                statusElement.textContent = 'Não Configurado';
+                statusElement.className = 'api-status missing';
+            }
+        }
+    });
+}
+
+async function testAndSaveApi(apiName) {
+    const keyInput = document.getElementById(`${apiName}-key`);
+    const apiKey = keyInput.value.trim();
+    
+    if (!apiKey) {
+        showNotification('Por favor, insira a chave da API', 'warning');
+        return;
+    }
+    
+    const button = event.target;
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+    button.disabled = true;
+    
+    try {
+        const response = await fetch('/api/save_api_config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                api_name: apiName,
+                api_key: apiKey
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification(`✅ ${apiName.toUpperCase()} configurado com sucesso!`, 'success');
+            
+            // Atualiza status visual
+            const statusElement = document.getElementById(`${apiName}-status`);
+            statusElement.textContent = 'Configurado';
+            statusElement.className = 'api-status configured';
+            
+            // Limpa o campo
+            keyInput.value = '';
+            
+            // Atualiza status geral
+            if (analysisSystem) {
+                analysisSystem.loadApiStatus();
+            }
+            
+        } else {
+            showNotification(`❌ Erro ao configurar ${apiName}: ${result.error}`, 'error');
+        }
+        
+    } catch (error) {
+        showNotification(`❌ Erro de conexão: ${error.message}`, 'error');
+    } finally {
+        button.innerHTML = originalContent;
+        button.disabled = false;
+    }
+}
+
+async function saveAllApiConfig() {
+    showNotification('✅ Configurações salvas! Sistema pronto para análises completas.', 'success');
+    closeApiConfig();
+    
+    if (analysisSystem) {
+        analysisSystem.loadApiStatus();
+    }
+}
+
+// Quick Setup Functions
+function fillQuickSetup(type) {
+    const templates = {
+        'saude': {
+            segmento: 'Telemedicina e Saúde Digital',
+            produto: 'Plataforma de Telemedicina',
+            publico: 'Médicos e profissionais de saúde que buscam modernizar atendimento, reduzir custos operacionais e ampliar alcance de pacientes através de tecnologia',
+            preco: '497.00',
+            objetivo_receita: '50000.00',
+            dados_adicionais: 'Mercado regulamentado pelo CFM, alta demanda pós-pandemia, necessidade de compliance com LGPD e normas médicas'
+        },
+        'tecnologia': {
+            segmento: 'Software e Tecnologia',
+            produto: 'Solução SaaS B2B',
+            publico: 'Gestores de TI e CTOs de empresas médias que precisam otimizar processos, reduzir custos de infraestrutura e acelerar transformação digital',
+            preco: '997.00',
+            objetivo_receita: '100000.00',
+            dados_adicionais: 'Mercado em crescimento acelerado, alta competitividade, necessidade de diferenciação técnica e suporte especializado'
+        },
+        'educacao': {
+            segmento: 'Educação e Treinamento Online',
+            produto: 'Curso Online Especializado',
+            publico: 'Profissionais que buscam especialização, empreendedores querendo aprender novas habilidades, pessoas em transição de carreira',
+            preco: '1997.00',
+            objetivo_receita: '200000.00',
+            dados_adicionais: 'Mercado de educação online cresceu 400% nos últimos 3 anos, alta demanda por certificações e habilidades práticas'
+        },
+        'consultoria': {
+            segmento: 'Consultoria Empresarial',
+            produto: 'Consultoria Estratégica',
+            publico: 'CEOs e diretores de empresas médias que enfrentam desafios de crescimento, necessitam reestruturação ou querem acelerar resultados',
+            preco: '15000.00',
+            objetivo_receita: '500000.00',
+            dados_adicionais: 'Mercado premium, decisão baseada em ROI, necessidade de credibilidade e cases comprovados, ciclo de vendas mais longo'
+        }
+    };
+    
+    const template = templates[type];
+    if (template) {
+        Object.keys(template).forEach(key => {
+            const input = document.getElementById(key);
+            if (input) {
+                input.value = template[key];
+                // Trigger events for enhanced inputs
+                input.dispatchEvent(new Event('input'));
+                input.dispatchEvent(new Event('change'));
+                
+                // Add has-value class for enhanced inputs
+                if (input.classList.contains('enhanced-form-input')) {
+                    input.classList.add('has-value');
+                }
+            }
+        });
+        
+        showNotification(`✅ Template ${type} aplicado com sucesso!`, 'success');
+    }
+}
+
 // Inicialização global
 let analysisSystem;
 let currentSessionId = null;
@@ -1209,6 +1495,8 @@ if (!document.getElementById('notificationStyles')) {
 
 document.addEventListener('DOMContentLoaded', () => {
     analysisSystem = new ModernAnalysisSystem();
-    console.log('🚀 ARQV30 Enhanced v3.0 - Sistema Moderno Inicializado');
-    console.log('🎯 Interface Moderna Carregada');
+    console.log('🚀 ARQV30 Enhanced v3.0 - Sistema Completo Inicializado');
+    console.log('🎯 Interface Moderna com 14 Módulos Carregada');
+    console.log('⚙️ Configuração de APIs Integrada');
+    console.log('🔧 Todos os Módulos Garantidos em Todas as Etapas');
 });
